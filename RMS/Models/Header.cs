@@ -16,6 +16,6 @@ namespace RMS.Models
     {
         public string header { get; set; }
         public string sub_header { get; set; }
-        public List<DashItem> items { get; set; }
+        public List<DashItem> items = new List<DashItem>();
     }
 }

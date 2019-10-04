@@ -42,6 +42,13 @@ namespace RMS.Activities
                     Id = n.idx
                 };
 
+                button.Click += (s, arg) =>
+                {
+                    Intent activity = new Intent(this, typeof(Dashboard));
+                    activity.PutExtra("Node", button.Id);
+                    activity.PutExtra("Token", Token);
+                    StartActivity(activity);
+                };
                 layout.AddView(button);
             }
         }

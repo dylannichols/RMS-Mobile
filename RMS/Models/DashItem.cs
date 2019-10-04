@@ -17,6 +17,7 @@ namespace RMS.Models
         public int id { get; set; }
         public int node_id { get; set; }
         public string header { get; set; }
+        public string sub_header { get; set; }
         public int address_id { get; set; }
         public string display_detail { get; set; }
         public string display_value { get; set; }
