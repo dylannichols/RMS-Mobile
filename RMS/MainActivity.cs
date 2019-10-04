@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Android;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -13,7 +14,9 @@ using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RMS.Activities;
 using RMS.Models;
 
 namespace RMS
@@ -43,53 +46,58 @@ namespace RMS
             Button loginBtn = FindViewById<Button>(Resource.Id.loginBtn);
             Button logoutBtn = FindViewById<Button>(Resource.Id.logoutBtn);
 
-            var email = FindViewById<EditText>(Resource.Id.username);
-            var password = FindViewById<EditText>(Resource.Id.password);
 
-            loginBtn.Click += async (s, arg) => {
+
+            loginBtn.Click += async (s, arg) =>
+            {
+                var email = FindViewById<EditText>(Resource.Id.username).Text.ToString();
+                var password = FindViewById<EditText>(Resource.Id.password).Text.ToString();
+                User user = new User(email, password);
+
+                string stringData = JsonConvert.SerializeObject(user);
+                var contentData = new StringContent(stringData,
+    System.Text.Encoding.UTF8, "application/json");
+                Console.WriteLine(stringData);
+                Console.WriteLine(contentData);
+
                 HttpClient client = new HttpClient();
 
-                var uri = new Uri(string.Format("http://13.210.251.7/api/auth/login?email=" + email.Text.ToString() + "&password=" + password.Text.ToString()));
+                var uri = new Uri(string.Format("http://13.210.251.7/api/auth/login"));
                 HttpResponseMessage response;
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                response = await client.GetAsync(uri);
+                response = await client.PostAsync(uri, contentData);
 
+                var responseJSON = await response.Content.ReadAsStringAsync();
+                JObject data = JObject.Parse(responseJSON);
+                string token = data["access_token"].ToString();
 
-                string cookie = response.Headers.GetValues("Set-Cookie").FirstOrDefault();
-                string tokenRaw = cookie.Split(';')[0];
-                string token = tokenRaw.Replace("XSRF-TOKEN=", "");
-
-
-                Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
-                alert.SetTitle("Response");
-                alert.SetMessage(token);
-
-                Dialog dialog = alert.Create();
-                dialog.Show();
+                Intent activity = new Intent(this, typeof(NodeSelect));
+                activity.PutExtra("Token", token);
+                StartActivity(activity);
             };
 
             logoutBtn.Click += async (s, arg) =>
-            {
-                HttpClient client = new HttpClient();
+                {
+                    HttpClient client = new HttpClient();
 
-                var uri = new Uri(string.Format("http://13.210.251.7/api/auth/logout"));
-                HttpResponseMessage response;
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                response = await client.GetAsync(uri);
+                    var uri = new Uri(string.Format("http://13.210.251.7/api/auth/logout"));
+                    HttpResponseMessage response;
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    response = await client.GetAsync(uri);
 
-                Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
-                alert.SetTitle("Response");
-                alert.SetMessage(response.ToString());
+                    Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
+                    alert.SetTitle("Response");
+                    alert.SetMessage(response.ToString());
 
-                Dialog dialog = alert.Create();
-                dialog.Show();
-            };
+                    Dialog dialog = alert.Create();
+                    dialog.Show();
+                };
         }
 
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            if(drawer.IsDrawerOpen(GravityCompat.Start))
+            if (drawer.IsDrawerOpen(GravityCompat.Start))
             {
                 drawer.CloseDrawer(GravityCompat.Start);
             }
@@ -118,7 +126,7 @@ namespace RMS
 
         private void FabOnClick(object sender, EventArgs eventArgs)
         {
-            View view = (View) sender;
+            View view = (View)sender;
             Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
                 .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }

@@ -60,9 +60,13 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\Dashboard.cs" />
     <Compile Include="Activities\Login.cs" />
     <Compile Include="Activities\NodeSelect.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Models\DashItem.cs" />
+    <Compile Include="Models\Header.cs" />
+    <Compile Include="Models\Node.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -146,6 +150,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\network_security_config.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dashboard.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

@@ -14,16 +14,16 @@ namespace RMS.Models
 {
     class User
     {
-        public int Id { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string Access_Token { get; set; }
+        //public int Id { get; set; }
+        public string email { get; set; }
+        public string password { get; set; }
+        //public string Access_Token { get; set; }
 
         public User() { }
-        public User(string email, string password)
+        public User(string e, string p)
         {
-            Email = email;
-            Password = password;
+            email = e;
+            password = p;
         }
     }
 }
