@@ -42,6 +42,7 @@ namespace RMS.Activities
                     var content = await response.Content.ReadAsStringAsync();
 
                     var activity = new Intent(this, typeof(NodeSelect));
+
                     StartActivity(activity);
                 }
 

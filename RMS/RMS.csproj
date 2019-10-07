@@ -63,7 +63,9 @@
     <Compile Include="Activities\Dashboard.cs" />
     <Compile Include="Activities\Login.cs" />
     <Compile Include="Activities\NodeSelect.cs" />
+    <Compile Include="Adapters\DashboardAdapter.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Models\Combo.cs" />
     <Compile Include="Models\DashItem.cs" />
     <Compile Include="Models\Header.cs" />
     <Compile Include="Models\Node.cs" />
@@ -133,9 +135,18 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.2</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
-    <PackageReference Include="Xamarin.Android.Support.Core.Utils" Version="28.0.0.1" />
-    <PackageReference Include="Xamarin.Android.Support.CustomTabs" Version="28.0.0.1" />
+    <PackageReference Include="Xamarin.Android.Support.Annotations">
+      <Version>28.0.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.Android.Support.Core.Utils" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.Android.Support.CustomTabs" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.Android.Support.v4">
+      <Version>28.0.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
+      <Version>28.0.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +166,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\dashboard.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dashtable.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

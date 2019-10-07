@@ -73,6 +73,7 @@ namespace RMS
 
                 Intent activity = new Intent(this, typeof(NodeSelect));
                 activity.PutExtra("Token", token);
+
                 StartActivity(activity);
             };
 

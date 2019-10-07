@@ -12,17 +12,12 @@ using Android.Widget;
 
 namespace RMS.Models
 {
-    class DashItem
+    class Combo
     {
         public int id { get; set; }
         public int node_id { get; set; }
-        public string header { get; set; }
-        public string sub_header { get; set; }
         public int address_id { get; set; }
-        public string display_detail { get; set; }
-        public string display_value { get; set; }
-        public string display_unit { get; set; }
-
-        public List<Combo> combos = new List<Combo>();
+        public int value_id { get; set; }
+        public string label { get; set; }
     }
 }
