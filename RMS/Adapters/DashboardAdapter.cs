@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 using Android.App;
@@ -9,7 +13,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using RMS.Models;
+using static Android.Media.Session.MediaSession;
 
 namespace RMS.Adapters
 {
@@ -18,11 +24,13 @@ namespace RMS.Adapters
 
         Context context;
         List<DashItem> items;
+        String token;
 
-        public DashboardAdapter(Context context, List<DashItem> items)
+        public DashboardAdapter(Context context, List<DashItem> items, string token)
         {
             this.context = context;
             this.items = items;
+            this.token = token;
         }
 
 
@@ -59,6 +67,8 @@ namespace RMS.Adapters
                 holder.Spinner = view.FindViewById<Spinner>(Resource.Id.spinner);
 
                 holder.Detail.Text = item.display_detail;
+                int address_id = item.address_id;
+                int node_id = item.node_id;
 
                 if (item.display_unit == "check")
                 {
@@ -75,6 +85,34 @@ namespace RMS.Adapters
                     {
                         holder.Switch.Checked = false;
                     }
+
+                    holder.Switch.Click += async (s, arg) =>
+                    {
+                        var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/check/{address_id}"));
+                        var value = item.display_value;
+                                                  
+                        var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+                        httpWebRequest.ContentType = "application/json";
+                        httpWebRequest.Method = "PATCH";
+                        httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                        using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                        {
+                            string json = "{\"data\":\"" + value + "\"}";
+
+                            streamWriter.Write(json);
+                        }
+
+                        var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                        {
+                            var result = streamReader.ReadToEnd();
+                            var toast = Toast.MakeText(context, result.ToString(), ToastLength.Short);
+                            toast.Show();
+                        }
+
+
+                    };
                 }
                 else if (item.display_unit == "combo")
                 {
@@ -89,6 +127,34 @@ namespace RMS.Adapters
                     }
                     var adapter = new ArrayAdapter<string>(view.Context, Android.Resource.Layout.SimpleSpinnerItem, labels);
                     holder.Spinner.Adapter = adapter;
+
+                    holder.Spinner.ItemSelected += async (s, arg) =>
+                    {
+                        var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/combo/{address_id}"));
+                        var value = item.display_value;
+
+                        var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+                        httpWebRequest.ContentType = "application/json";
+                        httpWebRequest.Method = "PATCH";
+                        httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                        using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                        {
+                            string json = "{\"data\":\"" + value + "\"}";
+
+                            streamWriter.Write(json);
+                        }
+
+                        var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                        {
+                            var result = streamReader.ReadToEnd();
+                            var toast = Toast.MakeText(context, result.ToString(), ToastLength.Short);
+                            toast.Show();
+                        }
+
+
+                    };
 
                 }
                 else

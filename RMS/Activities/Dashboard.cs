@@ -101,7 +101,7 @@ namespace RMS.Activities
                 var list = new ListView(this)
                 {
                     LayoutParameters = layoutParams,
-                    Adapter = new DashboardAdapter(this, header.items)
+                    Adapter = new DashboardAdapter(this, header.items, Token)
                 };
                 TextView title = new TextView(this)
                 {
