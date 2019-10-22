@@ -43,6 +43,13 @@ namespace RMS
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
+            LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+
+            LayoutInflater inflater = (LayoutInflater)GetSystemService(Context.LayoutInflaterService);
+
+            View loginView = inflater.Inflate(Resource.Layout.login, null, true);
+            contentMain.AddView(loginView);
+
             Button loginBtn = FindViewById<Button>(Resource.Id.loginBtn);
             Button logoutBtn = FindViewById<Button>(Resource.Id.logoutBtn);
 

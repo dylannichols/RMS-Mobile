@@ -9,6 +9,10 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Support.V4.View;
+using Android.Support.V4.Widget;
+using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
@@ -18,7 +22,7 @@ using RMS.Models;
 namespace RMS.Activities
 {
     [Activity(Label = "NodeSelect")]
-    public class NodeSelect : Activity
+    public class NodeSelect : MainActivity
     {
 
         public string Token;
@@ -26,8 +30,25 @@ namespace RMS.Activities
         {
             base.OnCreate(savedInstanceState);
 
-            SetContentView(Resource.Layout.node_select);
+            SetContentView(Resource.Layout.activity_main);
 
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            SetSupportActionBar(toolbar);
+
+            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+            drawer.AddDrawerListener(toggle);
+            toggle.SyncState();
+
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            navigationView.SetNavigationItemSelectedListener(this);
+
+            LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+
+            LayoutInflater inflater = (LayoutInflater)GetSystemService(Context.LayoutInflaterService);
+
+            View nodeSelectView = inflater.Inflate(Resource.Layout.node_select, null, true);
+            contentMain.AddView(nodeSelectView);
 
             Token = Intent.Extras.GetString("Token");
 

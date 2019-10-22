@@ -86,9 +86,9 @@ namespace RMS.Adapters
                         holder.Switch.Checked = false;
                     }
 
-                    holder.Switch.Click += async (s, arg) =>
+                    holder.Switch.Click += (s, arg) =>
                     {
-                        var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/check/{address_id}"));
+                        var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/dashboard/{address_id}"));
                         var value = item.display_value;
                                                   
                         var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
@@ -128,9 +128,9 @@ namespace RMS.Adapters
                     var adapter = new ArrayAdapter<string>(view.Context, Android.Resource.Layout.SimpleSpinnerItem, labels);
                     holder.Spinner.Adapter = adapter;
 
-                    holder.Spinner.ItemSelected += async (s, arg) =>
+                    holder.Spinner.ItemSelected += (s, arg) =>
                     {
-                        var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/combo/{address_id}"));
+                        var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/dashboard/{address_id}"));
                         var value = item.display_value;
 
                         var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
