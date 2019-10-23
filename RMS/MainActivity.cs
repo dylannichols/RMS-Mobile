@@ -26,6 +26,7 @@ namespace RMS
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            // General set up
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
@@ -43,7 +44,9 @@ namespace RMS
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
+            // Page layout set up
             LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+            //contentMain.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
 
             LayoutInflater inflater = (LayoutInflater)GetSystemService(Context.LayoutInflaterService);
 
@@ -51,10 +54,8 @@ namespace RMS
             contentMain.AddView(loginView);
 
             Button loginBtn = FindViewById<Button>(Resource.Id.loginBtn);
-            Button logoutBtn = FindViewById<Button>(Resource.Id.logoutBtn);
 
-
-
+            // Event listener for when user presses login button
             loginBtn.Click += async (s, arg) =>
             {
                 var email = FindViewById<EditText>(Resource.Id.username).Text.ToString();
@@ -73,33 +74,31 @@ namespace RMS
                 HttpResponseMessage response;
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 response = await client.PostAsync(uri, contentData);
-
                 var responseJSON = await response.Content.ReadAsStringAsync();
                 JObject data = JObject.Parse(responseJSON);
-                string token = data["access_token"].ToString();
 
-                Intent activity = new Intent(this, typeof(NodeSelect));
-                activity.PutExtra("Token", token);
-
-                StartActivity(activity);
-            };
-
-            logoutBtn.Click += async (s, arg) =>
+                // If api call is successful, then send the user to node select
+                if (response.IsSuccessStatusCode)
                 {
-                    HttpClient client = new HttpClient();
+                    string token = data["access_token"].ToString();
 
-                    var uri = new Uri(string.Format("http://13.210.251.7/api/auth/logout"));
-                    HttpResponseMessage response;
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    response = await client.GetAsync(uri);
+                    Intent activity = new Intent(this, typeof(NodeSelect));
+                    activity.PutExtra("Token", token);
 
-                    Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
-                    alert.SetTitle("Response");
-                    alert.SetMessage(response.ToString());
-
-                    Dialog dialog = alert.Create();
-                    dialog.Show();
-                };
+                    StartActivity(activity);
+                } 
+                // Otherwise display an error message
+                else
+                {
+                    TextView error = FindViewById<TextView>(Resource.Id.loginError);
+                    var message = data["message"].ToString();
+                    if (message == "Unauthorized")
+                    {
+                        message = "Incorrect login information.";
+                    }
+                    error.Text = message;                    
+                 }             
+            };        
         }
 
         public override void OnBackPressed()
