@@ -28,6 +28,7 @@ namespace RMS.Activities
     {
         public string Token;
         public int Node;
+        public int i = 0;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // General set up
@@ -49,15 +50,19 @@ namespace RMS.Activities
             // Set up page layout
             LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
 
-            LayoutInflater inflater = (LayoutInflater)GetSystemService(LayoutInflaterService);
-
-            View dashLayout = inflater.Inflate(Resource.Layout.dashboard, null, true);
-            contentMain.AddView(dashLayout);
 
             // Set up dashboard
             Token = Intent.Extras.GetString("Token");
             Node = Intent.Extras.GetInt("Node");
             var dashboard = GetDashboard();
+
+            var select = CreateNavDropdown(dashboard);
+            contentMain.AddView(select);
+
+            LayoutInflater inflater = (LayoutInflater)GetSystemService(LayoutInflaterService);
+
+            View dashLayout = inflater.Inflate(Resource.Layout.dashboard, null, true);
+            contentMain.AddView(dashLayout);
 
             if (dashboard != null)
             {
@@ -68,6 +73,43 @@ namespace RMS.Activities
                     layout.AddView(table);
                 }
             }
+        }
+
+        LinearLayout CreateNavDropdown(List<Header> dash)
+        {
+            List<string> headers = new List<string>();
+            foreach (Header h in dash)
+            {
+                string label = h.header + " " + h.sub_header;
+                headers.Add(label);
+            }
+
+            LinearLayout select = new LinearLayout(this)
+            { Orientation = Orientation.Horizontal };
+            select.SetHorizontalGravity(GravityFlags.Center);
+            select.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+            var adapter = new ArrayAdapter<string>(this, Resource.Layout.spinner_item, headers);
+
+            Spinner spinner = new Spinner(this)
+            {
+                Adapter = adapter
+            };
+            spinner.SetGravity(GravityFlags.CenterHorizontal);
+
+            spinner.ItemSelected += (s, arg) =>
+            {
+                var header = spinner.SelectedItemPosition;
+
+                View item = FindViewById(header);
+
+                ScrollView sv = FindViewById<ScrollView>(Resource.Id.dashScroll);
+
+                sv.ScrollTo(0, item.Top);
+            };
+            select.SetMinimumHeight(100);
+            select.AddView(spinner);
+
+            return select;
         }
 
         // Creates a table for each category in dashboard
@@ -87,7 +129,9 @@ namespace RMS.Activities
             var table = new TableLayout(this)
             {
                 LayoutParameters = layoutparams,
+                Id = i
             };
+            i++;
 
             table.Background = border;
             table.SetZ(30);
@@ -100,20 +144,36 @@ namespace RMS.Activities
             // Set up title for table
             var heading = new TableRow(this)
             {
-                LayoutParameters = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, TableLayout.LayoutParams.WrapContent)
+                LayoutParameters = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+
+            LinearLayout titleContainer = new LinearLayout(this)
+            {
+                Orientation = Orientation.Horizontal
             };
             var title = new TextView(this)
             {
-                LayoutParameters = heading.LayoutParameters,
                 Text = h.header,
                 TextSize = 20,
-                Gravity = GravityFlags.CenterHorizontal,
             };
-            title.SetPadding(10, 20, 0, 20);
+
+            title.SetPadding(10, 20, 20, 20);
             title.SetTextColor(Android.Graphics.Color.White);
             heading.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+            titleContainer.AddView(title);
 
-            heading.AddView(title);
+            if (h.sub_header != "")
+            {
+                var subtitle = new TextView(this)
+                {
+                    Text = h.sub_header,
+                    TextSize = 15,
+                };
+
+                subtitle.SetTextColor(Android.Graphics.Color.White);
+                titleContainer.AddView(subtitle);
+            }
+            heading.AddView(titleContainer);
             table.AddView(heading);
 
             // add items to table
