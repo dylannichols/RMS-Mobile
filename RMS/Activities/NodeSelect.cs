@@ -7,6 +7,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -75,15 +76,39 @@ namespace RMS.Activities
             // otherwise display buttons for user to select their node
             else
             {
-                var layout = FindViewById<LinearLayout>(Resource.Id.nodeLayout);
+                ScrollView scroll = FindViewById<ScrollView>(Resource.Id.nodeScrollView);
+
+                LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+                LinearLayout layout = new LinearLayout(this)
+                {
+                    Orientation = Orientation.Vertical,
+                    LayoutParameters = layoutparams
+                };
+
+                scroll.AddView(layout);
 
                 foreach (Node n in nodes)
                 {
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, 85);
+                    lp.SetMargins(100, 15, 100, 15);
+
                     var button = new Button(this)
                     {
                         Text = n.node_name,
-                        Id = n.idx
+                        Id = n.idx,
+                        LayoutParameters = lp
                     };
+                    button.SetMaxHeight(85);
+                    button.SetPadding(0, -10, 0, -10);
+
+                    GradientDrawable border = new GradientDrawable();
+
+                    border.SetColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+                    border.SetCornerRadius(20);
+
+                    //button.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+                    button.SetTextColor(Android.Graphics.Color.White);
+                    button.SetBackgroundDrawable(border);
 
                     // event listener for when user clicks a node
                     button.Click += (s, arg) =>

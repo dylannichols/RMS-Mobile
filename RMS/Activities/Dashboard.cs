@@ -166,30 +166,32 @@ namespace RMS.Activities
             else
             {
                 // Default set up for right hand side
-                TableRow.LayoutParams margin = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+                using (TableRow.LayoutParams margin = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
                 {
                     RightMargin = 15
-                };
-
-                // Value of item
-                var value = new TextView(this)
+                })
                 {
-                    Text = item.display_value,
-                    Gravity = GravityFlags.Right
-                };
-                row.AddView(label);
-                row.AddView(value);
 
-                // Unit of item, list is left out
-                if (item.display_unit != "list")
-                {
-                    var unit = new TextView(this)
+                    // Value of item
+                    var value = new TextView(this)
                     {
-                        Text = item.display_unit,
-                        Gravity = GravityFlags.Right,
-                        LayoutParameters = margin
+                        Text = item.display_value,
+                        Gravity = GravityFlags.Right
                     };
-                    row.AddView(unit);
+                    row.AddView(label);
+                    row.AddView(value);
+
+                    // Unit of item, list is left out
+                    if (item.display_unit != "list")
+                    {
+                        var unit = new TextView(this)
+                        {
+                            Text = item.display_unit,
+                            Gravity = GravityFlags.Right,
+                            LayoutParameters = margin
+                        };
+                        row.AddView(unit);
+                    }
                 }
             }
 
@@ -288,8 +290,10 @@ namespace RMS.Activities
 
                     using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                     {
-                        var result = streamReader.ReadToEnd();
-                        var toast = Toast.MakeText(this, result.ToString(), ToastLength.Short);
+                        var json = streamReader.ReadToEnd();
+                        JObject data = JObject.Parse(json);
+
+                        var toast = Toast.MakeText(this, data["message"].ToString(), ToastLength.Short);
                         toast.Show();
                     }
                 }
@@ -324,11 +328,12 @@ namespace RMS.Activities
                 catch (WebException e)
                 {
                     // if dashboard call fails, go back to node select and display an error
-                    var intent = new Intent(this, typeof(NodeSelect))
-                   .SetFlags(ActivityFlags.ReorderToFront);
-
-                    intent.PutExtra("Error", e.Message);
-                    StartActivity(intent);
+                    using (Intent intent = new Intent(this, typeof(NodeSelect))
+                   .SetFlags(ActivityFlags.ReorderToFront))
+                    {
+                        intent.PutExtra("Error", e.Message);
+                        StartActivity(intent);
+                    }
 
                     return null;
                 }
