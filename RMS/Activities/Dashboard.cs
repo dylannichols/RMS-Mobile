@@ -279,30 +279,9 @@ namespace RMS.Activities
             int node_id = item.node_id;
 
             // Event listener for when user interacts with switch
-            check.Click += async (s, arg) =>
+            check.Click += (s, arg) =>
             {
-                var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/dashboard/{address_id}"));
-                var val = item.display_value;
-
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-                httpWebRequest.ContentType = "application/json";
-                httpWebRequest.Method = "PATCH";
-                httpWebRequest.Headers.Add("Authorization", "Bearer " + Token);
-
-                using (var streamWriter = new StreamWriter(await httpWebRequest.GetRequestStreamAsync()))
-                {
-                    string json = "{\"data\":\"" + val + "\",\n\"type\": \"check\"}";
-
-                    streamWriter.Write(json);
-                }
-
-                var httpResponse = await httpWebRequest.GetResponseAsync();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-                    var toast = Toast.MakeText(this, result.ToString(), ToastLength.Short);
-                    toast.Show();
-                }
+                UpdateDashItem("check", item.display_value, node_id, address_id);
             };
 
             return check;
@@ -327,43 +306,45 @@ namespace RMS.Activities
             int node_id = item.node_id;
 
             // Event listener for when user interacts with spinner
-            spinner.ItemSelected += async (s, arg) =>
+            spinner.ItemSelected += (s, arg) =>
             {
-                var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/dashboard/{address_id}"));
-                var val = item.display_value;
-
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-                httpWebRequest.ContentType = "application/json";
-                httpWebRequest.Method = "PATCH";
-                httpWebRequest.Headers.Add("Authorization", "Bearer " + Token);
-
-                using (var streamWriter = new StreamWriter(await httpWebRequest.GetRequestStreamAsync()))
-                {
-                    string json = "{\"data\":\"" + val + "\",\n\"type\": \"combo\"}";
-
-                    streamWriter.Write(json);
-                }
-
-                try
-                {
-                    var httpResponse = await httpWebRequest.GetResponseAsync();
-
-                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                    {
-                        var json = streamReader.ReadToEnd();
-                        JObject data = JObject.Parse(json);
-
-                        var toast = Toast.MakeText(this, data["message"].ToString(), ToastLength.Short);
-                        toast.Show();
-                    }
-                }
-                catch (System.Net.WebException ex)
-                {
-                    Console.WriteLine(ex);
-                }
-
+                UpdateDashItem("combo", item.display_value, node_id, address_id);
             };
             return spinner;
+        }
+
+        // API call to update dashboard item 
+        private async void UpdateDashItem(string type, string value, int node_id, int address_id)
+        {
+            var uri = new Uri(string.Format($"http://13.210.251.7/api/nodes/{node_id}/dashboard/{address_id}"));
+
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "PATCH";
+            httpWebRequest.Headers.Add("Authorization", "Bearer " + Token);
+
+            using (var streamWriter = new StreamWriter(await httpWebRequest.GetRequestStreamAsync()))
+            {
+                string json = "{\"data\":\"" + value + "\",\n\"type\": \"" + type + "\"}";
+
+                streamWriter.Write(json);
+            }
+
+            try
+            {
+                var httpResponse = await httpWebRequest.GetResponseAsync();
+
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                    var toast = Toast.MakeText(this, result.ToString(), ToastLength.Short);
+                    toast.Show();
+                }
+            }
+            catch (System.Net.WebException ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
 
