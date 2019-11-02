@@ -61,9 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\Dashboard.cs" />
-    <Compile Include="Activities\Login.cs" />
     <Compile Include="Activities\NodeSelect.cs" />
-    <Compile Include="Adapters\DashboardAdapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\Combo.cs" />
     <Compile Include="Models\DashItem.cs" />

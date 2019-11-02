@@ -22,7 +22,7 @@ using RMS.Models;
 
 namespace RMS.Activities
 {
-    [Activity(Label = "Node Select")]
+    [Activity(Label = "Select Your Node")]
     public class NodeSelect : MainActivity
     {
 
@@ -89,7 +89,7 @@ namespace RMS.Activities
 
                 foreach (Node n in nodes)
                 {
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, 85);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
                     lp.SetMargins(100, 15, 100, 15);
 
                     var button = new Button(this)
@@ -108,7 +108,7 @@ namespace RMS.Activities
 
                     //button.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
                     button.SetTextColor(Android.Graphics.Color.White);
-                    button.SetBackgroundDrawable(border);
+                    button.Background = border;
 
                     // event listener for when user clicks a node
                     button.Click += (s, arg) =>

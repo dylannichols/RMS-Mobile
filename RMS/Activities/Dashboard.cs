@@ -18,7 +18,6 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RMS.Adapters;
 using RMS.Models;
 
 namespace RMS.Activities
@@ -27,6 +26,7 @@ namespace RMS.Activities
     public class Dashboard : MainActivity
     {
         public string Token;
+        public string Name;
         public int Node;
         public int i;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -54,6 +54,10 @@ namespace RMS.Activities
             // Set up dashboard
             Token = Intent.Extras.GetString("Token");
             Node = Intent.Extras.GetInt("Node");
+            Name = Intent.Extras.GetString("Name");
+
+            this.Title = Name;
+
             var dashboard = GetDashboard();
 
             var select = CreateNavDropdown(dashboard);
@@ -98,10 +102,10 @@ namespace RMS.Activities
             {
                 Adapter = adapter
             };
+            spinner.SetSelection(0);
+
             spinner.SetGravity(GravityFlags.CenterHorizontal);
             spinner.BackgroundTintList = GetColorStateList(Resource.Color.primaryTextColor);
-
-            spinner.SetSelection(0);
 
             spinner.ItemSelected += (s, arg) =>
             {
@@ -435,13 +439,16 @@ namespace RMS.Activities
                 catch (WebException e)
                 {
                     // if dashboard call fails, go back to node select and display an error
-                    Intent intent1 = new Intent(this, typeof(NodeSelect));
-                    using (Intent intent = intent1
-                   .SetFlags(ActivityFlags.ReorderToFront))
-                    {
-                        intent.PutExtra("Error", e.Message);
-                        StartActivity(intent);
-                    }
+                    // the warning suppression is due to an erroneous warning
+
+#pragma warning disable IDE0067 // Dispose objects before losing scope
+                    Intent intent = new Intent(this, typeof(NodeSelect))
+#pragma warning restore IDE0067 // Dispose objects before losing scope
+                   .SetFlags(ActivityFlags.ReorderToFront);
+
+                    intent.PutExtra("Error", e.Message);
+                    StartActivity(intent);
+
 
                     return null;
                 }

@@ -10,7 +10,8 @@
     tools:showIn="@layout/app_bar_main"
     android:minWidth="25px"
     android:minHeight="25px"
-    android:id="@+id/contentMain">
+    android:id="@+id/contentMain"
+    android:gravity="center">
          
 
 </LinearLayout>

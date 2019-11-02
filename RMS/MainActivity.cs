@@ -21,7 +21,7 @@ using RMS.Models;
 
 namespace RMS
 {
-    [Activity (Name = "com.concar.rms.main", Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustResize)]
+    [Activity (Name = "com.concar.rms.main", Label = "@string/app_name", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustPan)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -40,6 +40,8 @@ namespace RMS
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
+
+            Window.SetSoftInputMode(SoftInput.AdjustUnspecified);
 
             // Page layout set up
             LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
