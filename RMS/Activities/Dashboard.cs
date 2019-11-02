@@ -28,7 +28,7 @@ namespace RMS.Activities
     {
         public string Token;
         public int Node;
-        public int i = 0;
+        public int i;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // General set up
@@ -66,7 +66,10 @@ namespace RMS.Activities
 
             if (dashboard != null)
             {
+                i = 0;
                 LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.dashLayout);
+                var timer = RefreshTimer();
+                layout.AddView(timer);
                 foreach (Header h in dashboard)
                 {
                     var table = CreateTable(h);
@@ -84,6 +87,7 @@ namespace RMS.Activities
                 headers.Add(label);
             }
 
+            // This has to be created dynamically so it can be above the scrollview in contentmain
             LinearLayout select = new LinearLayout(this)
             { Orientation = Orientation.Horizontal };
             select.SetHorizontalGravity(GravityFlags.Center);
@@ -95,6 +99,9 @@ namespace RMS.Activities
                 Adapter = adapter
             };
             spinner.SetGravity(GravityFlags.CenterHorizontal);
+            spinner.BackgroundTintList = GetColorStateList(Resource.Color.primaryTextColor);
+
+            spinner.SetSelection(0);
 
             spinner.ItemSelected += (s, arg) =>
             {
@@ -109,7 +116,62 @@ namespace RMS.Activities
             select.SetMinimumHeight(100);
             select.AddView(spinner);
 
+            var refresh = CreateRefreshButton();
+            select.AddView(refresh);
+
             return select;
+        }
+
+        // Initialize the refresh button and add the event listener
+        ImageButton CreateRefreshButton()
+        {
+            ImageButton refresh = new ImageButton(this);
+
+            Drawable refreshImage = GetDrawable(Resource.Drawable.ic_refresh_white_36dp);
+            refresh.Background = refreshImage;
+            refresh.SetForegroundGravity(GravityFlags.End);
+            refresh.SetScaleType(ImageView.ScaleType.FitXy);
+
+            refresh.Click += (s, arg) =>
+            {
+                var dashboard = GetDashboard();
+
+                if (dashboard != null)
+                {
+                    i = 0;
+                    LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.dashLayout);
+                    layout.RemoveAllViews();
+
+                    var timer = RefreshTimer();
+                    layout.AddView(timer);
+
+                    foreach (Header h in dashboard)
+                    {
+                        var table = CreateTable(h);
+                        layout.AddView(table);
+                    }
+
+                    var toast = Toast.MakeText(this, "Data successfully updated", ToastLength.Short);
+                    toast.Show();
+                }
+            };
+
+            return refresh;
+        }
+
+        // Tells the user how to refresh and when the page was last refreshed
+        TextView RefreshTimer()
+        {
+            var date = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+            TextView refreshTimer = new TextView(this)
+            {
+                Text = "Pull down or tap button to refresh data\nLast refreshed: " + date,
+                Gravity = GravityFlags.CenterHorizontal
+            };
+
+            refreshTimer.SetPadding(0, 20, 0, 0);
+            return refreshTimer;
         }
 
         // Creates a table for each category in dashboard
@@ -302,6 +364,10 @@ namespace RMS.Activities
             {
                 Adapter = adapter
             };
+
+            int position = labels.IndexOf(item.display_value);
+
+            spinner.SetSelection(position);
             int address_id = item.address_id;
             int node_id = item.node_id;
 
@@ -369,7 +435,8 @@ namespace RMS.Activities
                 catch (WebException e)
                 {
                     // if dashboard call fails, go back to node select and display an error
-                    using (Intent intent = new Intent(this, typeof(NodeSelect))
+                    Intent intent1 = new Intent(this, typeof(NodeSelect));
+                    using (Intent intent = intent1
                    .SetFlags(ActivityFlags.ReorderToFront))
                     {
                         intent.PutExtra("Error", e.Message);
