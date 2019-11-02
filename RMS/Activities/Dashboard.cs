@@ -46,44 +46,74 @@ namespace RMS.Activities
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
-
-            // Set up page layout
-            LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
-
+            navigationView.SetNavigationItemSelectedListener(this);
 
             // Set up dashboard
             Token = Intent.Extras.GetString("Token");
             Node = Intent.Extras.GetInt("Node");
             Name = Intent.Extras.GetString("Name");
 
+            var menu = navigationView.Menu;
+
+            var userMenu = menu.FindItem(Resource.Id.userMenu);
+            userMenu.SetVisible(true);
+
+            IMenuItem dashMenu = menu.FindItem(Resource.Id.dashMenu);
+            dashMenu.SetTitle(Name);
+            dashMenu.SetTitleCondensed(Name);
+            dashMenu.SetVisible(true);
+
             this.Title = Name;
 
+            InitializePage(true);
+        }
+
+        // Begins the process of getting the data and setting up the views that display that data
+        void InitializePage(bool firstLoad)
+        {
+            // call the API
             var dashboard = GetDashboard();
 
-            var select = CreateNavDropdown(dashboard);
-            contentMain.AddView(select);
-
-            LayoutInflater inflater = (LayoutInflater)GetSystemService(LayoutInflaterService);
-
-            View dashLayout = inflater.Inflate(Resource.Layout.dashboard, null, true);
-            contentMain.AddView(dashLayout);
-
+            // If the API call was successful then start the process of setting up
             if (dashboard != null)
             {
+                // Some layout scaffolding must be done if the activity is being loaded for the first time
+                if (firstLoad)
+                {
+                    LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+
+                    var select = CreateNavDropdown(dashboard);
+                    contentMain.AddView(select);
+
+                    LayoutInflater inflater = (LayoutInflater)GetSystemService(LayoutInflaterService);
+
+                    View dashLayout = inflater.Inflate(Resource.Layout.dashboard, null, true);
+                    contentMain.AddView(dashLayout);
+                }
+
+
                 i = 0;
                 LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.dashLayout);
+                layout.RemoveAllViews();
+
                 var timer = RefreshTimer();
                 layout.AddView(timer);
+
                 foreach (Header h in dashboard)
                 {
                     var table = CreateTable(h);
                     layout.AddView(table);
                 }
+
+                var toast = Toast.MakeText(this, "Data successfully updated", ToastLength.Short);
+                toast.Show();
             }
         }
 
+        // Creates the navigation at the top of the page where the user can select a table from the dropdown
         LinearLayout CreateNavDropdown(List<Header> dash)
         {
+            // Create a list of headers
             List<string> headers = new List<string>();
             foreach (Header h in dash)
             {
@@ -98,6 +128,7 @@ namespace RMS.Activities
             select.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
             var adapter = new ArrayAdapter<string>(this, Resource.Layout.spinner_item, headers);
 
+            // Create the dropdown menu that will be used to select a table
             Spinner spinner = new Spinner(this)
             {
                 Adapter = adapter
@@ -107,6 +138,7 @@ namespace RMS.Activities
             spinner.SetGravity(GravityFlags.CenterHorizontal);
             spinner.BackgroundTintList = GetColorStateList(Resource.Color.primaryTextColor);
 
+            // Event listener so that when a user selects a header they are sent to the relevant table
             spinner.ItemSelected += (s, arg) =>
             {
                 var header = spinner.SelectedItemPosition;
@@ -117,9 +149,11 @@ namespace RMS.Activities
 
                 sv.ScrollTo(0, item.Top);
             };
+
             select.SetMinimumHeight(100);
             select.AddView(spinner);
 
+            // Add the refresh button to the bar
             var refresh = CreateRefreshButton();
             select.AddView(refresh);
 
@@ -138,26 +172,7 @@ namespace RMS.Activities
 
             refresh.Click += (s, arg) =>
             {
-                var dashboard = GetDashboard();
-
-                if (dashboard != null)
-                {
-                    i = 0;
-                    LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.dashLayout);
-                    layout.RemoveAllViews();
-
-                    var timer = RefreshTimer();
-                    layout.AddView(timer);
-
-                    foreach (Header h in dashboard)
-                    {
-                        var table = CreateTable(h);
-                        layout.AddView(table);
-                    }
-
-                    var toast = Toast.MakeText(this, "Data successfully updated", ToastLength.Short);
-                    toast.Show();
-                }
+                InitializePage(false);
             };
 
             return refresh;
@@ -439,12 +454,9 @@ namespace RMS.Activities
                 catch (WebException e)
                 {
                     // if dashboard call fails, go back to node select and display an error
-                    // the warning suppression is due to an erroneous warning
 
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-                    Intent intent = new Intent(this, typeof(NodeSelect))
-#pragma warning restore IDE0067 // Dispose objects before losing scope
-                   .SetFlags(ActivityFlags.ReorderToFront);
+                    Intent intent = new Intent(this, typeof(NodeSelect));
+                    intent.SetFlags(ActivityFlags.ReorderToFront);
 
                     intent.PutExtra("Error", e.Message);
                     StartActivity(intent);
@@ -453,6 +465,30 @@ namespace RMS.Activities
                     return null;
                 }
             }
+        }
+
+        public override bool OnNavigationItemSelected(IMenuItem item)
+        {
+            if (item.ItemId == Resource.Id.logoutNav)
+            {
+                Intent intent = new Intent(this, typeof(MainActivity));
+                intent.SetFlags(ActivityFlags.ClearTop);
+                StartActivity(intent);
+            }
+            else if (item.ItemId == Resource.Id.dashNav)
+            {
+                InitializePage(false);
+            }
+            else if (item.ItemId == Resource.Id.selectNav)
+            {
+                Intent activity = new Intent(this, typeof(NodeSelect));
+                activity.PutExtra("Token", Token);
+                StartActivity(activity);
+            }
+
+            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            drawer.CloseDrawer(GravityCompat.Start);
+            return true;
         }
     }
 }

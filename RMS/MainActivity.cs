@@ -45,6 +45,8 @@ namespace RMS
 
             // Page layout set up
             LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+
+         
             //contentMain.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
 
             LayoutInflater inflater = (LayoutInflater)GetSystemService(Context.LayoutInflaterService);
@@ -137,34 +139,9 @@ namespace RMS
                 .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
 
-        public bool OnNavigationItemSelected(IMenuItem item)
+        public virtual bool OnNavigationItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
-
-            if (id == Resource.Id.nav_camera)
-            {
-                // Handle the camera action
-            }
-            else if (id == Resource.Id.nav_gallery)
-            {
-
-            }
-            else if (id == Resource.Id.nav_slideshow)
-            {
-
-            }
-            else if (id == Resource.Id.nav_manage)
-            {
-
-            }
-            else if (id == Resource.Id.nav_share)
-            {
-
-            }
-            else if (id == Resource.Id.nav_send)
-            {
-
-            }
+            
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
