@@ -89,6 +89,14 @@ namespace RMS.Activities
 
                     View dashLayout = inflater.Inflate(Resource.Layout.dashboard, null, true);
                     contentMain.AddView(dashLayout);
+
+                    SwipeRefreshLayout swipeRefreshLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.swipeLayout);
+                    swipeRefreshLayout.Refresh += (s, arg) =>
+                    {
+                        swipeRefreshLayout.Refreshing = true;
+                        InitializePage(false);
+                        swipeRefreshLayout.Refreshing = false;
+                    };
                 }
 
 
@@ -145,7 +153,7 @@ namespace RMS.Activities
 
                 View item = FindViewById(header);
 
-                ScrollView sv = FindViewById<ScrollView>(Resource.Id.dashScroll);
+                NestedScrollView sv = FindViewById<NestedScrollView>(Resource.Id.dashScroll);
 
                 sv.ScrollTo(0, item.Top);
             };
