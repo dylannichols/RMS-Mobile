@@ -18,12 +18,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RMS.Activities;
 using RMS.Models;
+using Xamarin.Essentials;
 
 namespace RMS
 {
     [Activity (Name = "com.concar.rms.main", Label = "@string/app_name", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustPan)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        public static double Density;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // General set up
@@ -42,6 +44,8 @@ namespace RMS
             navigationView.SetNavigationItemSelectedListener(this);
 
             Window.SetSoftInputMode(SoftInput.AdjustUnspecified);
+
+            Density = DeviceDisplay.MainDisplayInfo.Density;
 
             // Page layout set up
             LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
@@ -152,6 +156,11 @@ namespace RMS
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        public int DpToPx(double dp)
+        {
+            return Convert.ToInt32(dp * Density);
         }
     }
 }

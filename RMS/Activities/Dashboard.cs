@@ -157,7 +157,7 @@ namespace RMS.Activities
 
                 NestedScrollView sv = FindViewById<NestedScrollView>(Resource.Id.dashScroll);
 
-                sv.ScrollTo(0, item.Top);
+                sv.ScrollTo(0, (item.Top - 20));
             };
 
 
@@ -199,7 +199,7 @@ namespace RMS.Activities
                 Gravity = GravityFlags.CenterHorizontal
             };
 
-            refreshTimer.SetPadding(0, 20, 0, 0);
+            refreshTimer.SetPadding(0, DpToPx(20), 0, 0);
             return refreshTimer;
         }
 
@@ -215,7 +215,7 @@ namespace RMS.Activities
 
             // Set up layout of table
             TableLayout.LayoutParams layoutparams = new TableLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
-            layoutparams.SetMargins(50, 30, 50, 30);
+            layoutparams.SetMargins(DpToPx(15), DpToPx(10), DpToPx(15), DpToPx(10));
 
             var table = new TableLayout(this)
             {
@@ -223,14 +223,21 @@ namespace RMS.Activities
                 Id = i
             };
             i++;
-            table.SetMinimumWidth(700);
+            //table.SetMinimumWidth(DpToPx(250));
 
             table.Background = border;
             table.SetZ(30);
 
             table.Click += (s, arg) =>
             {
-                table.SetZ(80);
+                if (table.GetZ() == 30)
+                {
+                    table.SetZ(80);
+                }
+                else
+                {
+                    table.SetZ(30);
+                }
             };
 
             // Set up title for table
@@ -249,7 +256,7 @@ namespace RMS.Activities
                 TextSize = 20,
             };
 
-            title.SetPadding(10, 20, 20, 20);
+            title.SetPadding(DpToPx(10), DpToPx(10), DpToPx(10), DpToPx(10));
             title.SetTextColor(Android.Graphics.Color.White);
             heading.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
             titleContainer.AddView(title);
@@ -268,17 +275,26 @@ namespace RMS.Activities
             heading.AddView(titleContainer);
             table.AddView(heading);
 
+            bool dark = false;
             // add items to table
             foreach (DashItem item in h.items)
             {
-                var row = CreateRow(item);
+                var row = CreateRow(item, dark);
                 table.AddView(row);
+                if (dark)
+                {
+                    dark = false;
+                }
+                else
+                {
+                    dark = true;
+                }
             }
             return table;
         }
 
         // Set up rows
-        TableRow CreateRow(DashItem item)
+        TableRow CreateRow(DashItem item, bool dark)
         {
             // Row layout
             TableRow.LayoutParams rowParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent, 10);
@@ -286,72 +302,99 @@ namespace RMS.Activities
             {
                 LayoutParameters = rowParams
             };
-
-            TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent, 6)
+            if (dark)
             {
-                LeftMargin = 15,
-                TopMargin = 5,
-                BottomMargin = 5
-            };
+                row.SetBackgroundColor(Android.Graphics.Color.ParseColor("#E8E8E8"));
+            }
+
+            TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, DpToPx(28), 5);
+            param.LeftMargin = DpToPx(10);
+
+            // Set up attributes for text
+            var textColour = Android.Graphics.Color.ParseColor("#212529");
+            var textSize = 15;
+
 
             // Label for dash item
             var label = new TextView(this)
             {
                 Text = item.display_detail,
-                Gravity = GravityFlags.Left,
-                LayoutParameters = param
+                Gravity = GravityFlags.Left
             };
+            label.SetTextSize(Android.Util.ComplexUnitType.Sp, textSize);
+            label.SetTextColor(textColour);
+
+
+            label.SetPadding(DpToPx(10), 0, 0, 0);
+            row.AddView(label);
 
             // Set up right hand side of dash item for different types of content
+            LinearLayout right = new LinearLayout(this);
+            right.LayoutParameters = param;
+            right.SetGravity(GravityFlags.Right);
+            right.SetPadding(0, 0, DpToPx(10), 0);
+
             if (item.display_unit == "check")
             {
-                var check = CreateCheck(item);
-                row.AddView(label);
-                row.AddView(check);
+                var unit = new TextView(this)
+                {
+                    Text = item.display_value,
+                    Gravity = GravityFlags.CenterVertical,
+                };
+                unit.SetTextSize(Android.Util.ComplexUnitType.Sp, textSize);
+                unit.SetTextColor(textColour);
+
+                var check = CreateCheck(item, unit);
+                right.AddView(check);
+
+                right.AddView(unit);
             }
             else if (item.display_unit == "combo")
             {
                 var spinner = CreateCombo(item);
-                row.AddView(label);
-                row.AddView(spinner);
+                right.AddView(spinner);
             }
             else
             {
                 // Default set up for right hand side
-                using (TableRow.LayoutParams margin = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
-                {
-                    RightMargin = 15
-                })
-                {
 
-                    // Value of item
-                    var value = new TextView(this)
+                // Value of item
+                var value = new TextView(this)
+                {
+                    Text = item.display_value,
+                    Gravity = GravityFlags.Right,
+                };
+                value.SetPadding(0, 0, DpToPx(3), 0);
+                value.SetTextSize(Android.Util.ComplexUnitType.Sp, textSize);
+                value.SetTextColor(textColour);
+
+                right.AddView(value);
+
+                // Unit of item, list is left out
+                if (item.display_unit != "list" && item.display_unit != "switch" && item.display_unit != "time")
+                {
+                    var unit = new TextView(this)
                     {
-                        Text = item.display_value,
+                        Text = item.display_unit,
                         Gravity = GravityFlags.Right
                     };
-                    row.AddView(label);
-                    row.AddView(value);
+                    unit.SetTextSize(Android.Util.ComplexUnitType.Sp, textSize);
+                    unit.SetTextColor(textColour);
 
-                    // Unit of item, list is left out
-                    if (item.display_unit != "list")
-                    {
-                        var unit = new TextView(this)
-                        {
-                            Text = item.display_unit,
-                            Gravity = GravityFlags.Right,
-                            LayoutParameters = margin
-                        };
-                        row.AddView(unit);
-                    }
+                    right.AddView(unit);
+
                 }
+
             }
+            row.AddView(right);
 
             return row;
         }
 
+
+
         // Creates a switch for checkbox items
-        Switch CreateCheck(DashItem item)
+        Switch CreateCheck(DashItem item, TextView label)
         {
             // Set up switch
             var check = new Switch(this)
@@ -374,6 +417,14 @@ namespace RMS.Activities
             check.Click += (s, arg) =>
             {
                 UpdateDashItem("check", item.display_value, node_id, address_id);
+                if (label.Text == "On")
+                {
+                    label.Text = "Off";
+                }
+                else
+                {
+                    label.Text = "On";
+                }
             };
 
             return check;

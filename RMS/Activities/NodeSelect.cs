@@ -19,6 +19,7 @@ using Android.Widget;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RMS.Models;
+using Xamarin.Essentials;
 
 namespace RMS.Activities
 {
@@ -45,6 +46,8 @@ namespace RMS.Activities
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
+
+            Density = DeviceDisplay.MainDisplayInfo.Density;
 
             // Page layout set up
             LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
@@ -81,55 +84,61 @@ namespace RMS.Activities
             // otherwise display buttons for user to select their node
             else
             {
-                AddNodesToDrawer();
-
-                ScrollView scroll = FindViewById<ScrollView>(Resource.Id.nodeScrollView);
-
-                LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
-                LinearLayout layout = new LinearLayout(this)
-                {
-                    Orientation = Orientation.Vertical,
-                    LayoutParameters = layoutparams
-                };
-
-                scroll.AddView(layout);
-
-                foreach (Node n in Nodes)
-                {
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
-                    lp.SetMargins(100, 15, 100, 15);
-
-                    var button = new Button(this)
-                    {
-                        Text = n.node_name,
-                        Id = n.idx,
-                        LayoutParameters = lp
-                    };
-                    button.SetMaxHeight(85);
-                    button.SetPadding(0, -10, 0, -10);
-
-                    GradientDrawable border = new GradientDrawable();
-
-                    border.SetColor(Android.Graphics.Color.ParseColor("#3f51b5"));
-                    border.SetCornerRadius(20);
-
-                    //button.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
-                    button.SetTextColor(Android.Graphics.Color.White);
-                    button.Background = border;
-
-                    // event listener for when user clicks a node
-                    button.Click += (s, arg) =>
-                    {
-                        Intent activity = new Intent(this, typeof(Dashboard));
-                        activity.PutExtra("Node", button.Id);
-                        activity.PutExtra("Name", n.node_name);
-                        activity.PutExtra("Token", Token);
-                        StartActivity(activity);
-                    };
-                    layout.AddView(button);
-                }
+                CreateButtons();
             }
 
+        }
+
+        private void CreateButtons()
+        {
+
+            ScrollView scroll = FindViewById<ScrollView>(Resource.Id.nodeScrollView);
+
+            LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            LinearLayout layout = new LinearLayout(this)
+            {
+                Orientation = Orientation.Vertical,
+                LayoutParameters = layoutparams,
+            };
+            layout.SetGravity(GravityFlags.Center);
+
+            scroll.AddView(layout);
+
+            foreach (Node n in Nodes)
+            {
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
+                lp.SetMargins(DpToPx(10), DpToPx(5), DpToPx(10), DpToPx(5));
+               
+
+                var button = new Button(this)
+                {
+                    Text = n.node_name,
+                    Id = n.idx,
+                    LayoutParameters = lp
+                };
+                button.SetMinimumWidth(DpToPx(300));
+                button.SetMaxWidth(DpToPx(500));
+                //button.SetPadding(0, -10, 0, -10);
+
+                GradientDrawable border = new GradientDrawable();
+
+                border.SetColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+                border.SetCornerRadius(DpToPx(15));
+
+                button.SetTextColor(Android.Graphics.Color.White);
+                button.Background = border;
+
+                // event listener for when user clicks a node
+                button.Click += (s, arg) =>
+                {
+                    Intent activity = new Intent(this, typeof(Dashboard));
+                    activity.PutExtra("Node", button.Id);
+                    activity.PutExtra("Name", n.node_name);
+                    activity.PutExtra("Token", Token);
+                    StartActivity(activity);
+                };
+                layout.AddView(button);
+            }
         }
 
         // API call to initialize Nodes
@@ -158,17 +167,6 @@ namespace RMS.Activities
             }
         }
 
-        private void AddNodesToDrawer()
-        {
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
-            var menu = navigationView.Menu;
-            var submenu = menu.AddSubMenu("Nodes");
-
-            foreach (Node n in Nodes)
-            {
-                var item = submenu.Add(n.node_name);
-            }
-        }
 
         public new bool OnNavigationItemSelected(IMenuItem item)
         {
