@@ -132,8 +132,10 @@ namespace RMS.Activities
             // This has to be created dynamically so it can be above the scrollview in contentmain
             LinearLayout select = new LinearLayout(this)
             { Orientation = Orientation.Horizontal };
-            select.SetHorizontalGravity(GravityFlags.Center);
+
+            select.SetGravity(GravityFlags.Center);
             select.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+            select.Elevation = 50;
             var adapter = new ArrayAdapter<string>(this, Resource.Layout.spinner_item, headers);
 
             // Create the dropdown menu that will be used to select a table
@@ -158,7 +160,7 @@ namespace RMS.Activities
                 sv.ScrollTo(0, item.Top);
             };
 
-            select.SetMinimumHeight(100);
+
             select.AddView(spinner);
 
             // Add the refresh button to the bar
@@ -173,10 +175,10 @@ namespace RMS.Activities
         {
             ImageButton refresh = new ImageButton(this);
 
-            Drawable refreshImage = GetDrawable(Resource.Drawable.ic_refresh_white_36dp);
+
+            Drawable refreshImage = GetDrawable(Resource.Drawable.ic_refresh_white_24dp);
             refresh.Background = refreshImage;
-            refresh.SetForegroundGravity(GravityFlags.End);
-            refresh.SetScaleType(ImageView.ScaleType.FitXy);
+            refresh.SetForegroundGravity(GravityFlags.Right);
 
             refresh.Click += (s, arg) =>
             {
@@ -212,7 +214,7 @@ namespace RMS.Activities
             border.SetCornerRadius(8);
 
             // Set up layout of table
-            TableLayout.LayoutParams layoutparams = new TableLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            TableLayout.LayoutParams layoutparams = new TableLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
             layoutparams.SetMargins(50, 30, 50, 30);
 
             var table = new TableLayout(this)
@@ -221,6 +223,7 @@ namespace RMS.Activities
                 Id = i
             };
             i++;
+            table.SetMinimumWidth(700);
 
             table.Background = border;
             table.SetZ(30);
@@ -233,7 +236,7 @@ namespace RMS.Activities
             // Set up title for table
             var heading = new TableRow(this)
             {
-                LayoutParameters = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+                LayoutParameters = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent),
             };
 
             LinearLayout titleContainer = new LinearLayout(this)
@@ -278,13 +281,13 @@ namespace RMS.Activities
         TableRow CreateRow(DashItem item)
         {
             // Row layout
-            TableRow.LayoutParams rowParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent, 10);
+            TableRow.LayoutParams rowParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent, 10);
             var row = new TableRow(this)
             {
                 LayoutParameters = rowParams
             };
 
-            TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent, 6)
+            TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent, 6)
             {
                 LeftMargin = 15,
                 TopMargin = 5,
@@ -315,7 +318,7 @@ namespace RMS.Activities
             else
             {
                 // Default set up for right hand side
-                using (TableRow.LayoutParams margin = new TableRow.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+                using (TableRow.LayoutParams margin = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
                 {
                     RightMargin = 15
                 })
