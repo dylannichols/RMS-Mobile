@@ -1,51 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/loginLayout"
-    android:gravity="center"
+    android:layout_height="match_parent"
+       
+>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loginLayout"
+        android:gravity="center"
+        
     >
 
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/logo"/>
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/logo"/>
 
-    <EditText
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/username"
-        android:hint="Email"
-        android:maxLines="1"
-        android:imeOptions="actionNext"
-        android:inputType="textEmailAddress"/>
-    <EditText
-        android:inputType="textPassword"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/password"
-        android:hint="Password"
-        android:imeOptions="actionDone"/>
-    <Button
-        android:text="Login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginBtn"
-        android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginError"
-        android:textColor="@android:color/holo_red_dark"/>
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/username"
+            android:hint="Email"
+            android:maxLines="1"
+            android:textSize="20sp"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"/>
+        <EditText
+            android:inputType="textPassword"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/password"
+            android:textSize="20sp"
+            android:hint="Password"
+            android:imeOptions="actionDone"/>
+        <Button
+            android:text="Login"
+            android:layout_width="300dp"
+            android:layout_height="55dp"
+            android:id="@+id/loginBtn"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:elevation="30dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_background"
+            android:textColor="@android:color/white"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loginError"
+            android:textColor="@android:color/holo_red_dark"/>
 
 
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

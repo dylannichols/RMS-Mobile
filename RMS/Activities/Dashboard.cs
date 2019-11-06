@@ -19,6 +19,7 @@ using Android.Widget;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RMS.Models;
+using Xamarin.Essentials;
 
 namespace RMS.Activities
 {
@@ -140,7 +141,7 @@ namespace RMS.Activities
             { Orientation = Orientation.Horizontal };
 
             select.SetGravity(GravityFlags.Center);
-            select.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
+            select.SetBackgroundColor(Android.Graphics.Color.ParseColor("#5e6ec7"));
             select.Elevation = 50;
             var adapter = new ArrayAdapter<string>(this, Resource.Layout.spinner_item, headers);
 
@@ -236,6 +237,11 @@ namespace RMS.Activities
                 LayoutParameters = layoutparams,
                 Id = i
             };
+            
+            if (DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Landscape)
+            {
+                table.LayoutParameters.Width = DpToPx(450);
+            }
             i++;
             //table.SetMinimumWidth(DpToPx(250));
 
@@ -458,7 +464,7 @@ namespace RMS.Activities
             {
                 labels.Add(combo.label);
             }
-            var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, labels);
+            var adapter = new ArrayAdapter<string>(this, Resource.Layout.combo_item, labels);
 
             var spinner = new Spinner(this)
             {
@@ -470,6 +476,7 @@ namespace RMS.Activities
             spinner.SetSelection(position);
             int address_id = item.address_id;
             int node_id = item.node_id;
+
 
             bool firstTrigger = true;
 
@@ -611,7 +618,7 @@ namespace RMS.Activities
             }
             else if (id == Resource.Id.bottomMenu)
             {
-                DashScroll.FullScroll(DashLayout.Bottom);
+                DashScroll.ScrollTo(0,DashLayout.Bottom);
             }
             else if (id == Resource.Id.logoutMenu)
             {
