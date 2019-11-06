@@ -7,17 +7,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/loginLayout"
-    android:paddingLeft="60dp"
-    android:paddingRight="60dp"
+    android:gravity="center"
     >
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo"/>
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/logo"/>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/username"
         android:hint="Email"
@@ -26,7 +28,7 @@
         android:inputType="textEmailAddress"/>
     <EditText
         android:inputType="textPassword"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/password"
         android:hint="Password"

@@ -54,6 +54,8 @@ namespace RMS.Activities
             Node = Intent.Extras.GetInt("Node");
             Name = Intent.Extras.GetString("Name");
 
+            Title = Name;
+
             var menu = navigationView.Menu;
 
             var userMenu = menu.FindItem(Resource.Id.userMenu);
@@ -63,9 +65,6 @@ namespace RMS.Activities
             dashMenu.SetTitle(Name);
             dashMenu.SetTitleCondensed(Name);
             dashMenu.SetVisible(true);
-
-            this.Title = Name;
-
 
             InitializePage(true);
         }
