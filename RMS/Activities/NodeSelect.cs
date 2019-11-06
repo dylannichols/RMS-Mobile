@@ -29,6 +29,7 @@ namespace RMS.Activities
 
         public string Token;
         private List<Node> Nodes;
+        public ScrollView ScrollView;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // General Set up
@@ -50,12 +51,12 @@ namespace RMS.Activities
             Density = DeviceDisplay.MainDisplayInfo.Density;
 
             // Page layout set up
-            LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+            ContentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
 
             LayoutInflater inflater = (LayoutInflater)GetSystemService(Context.LayoutInflaterService);
 
             View nodeSelectView = inflater.Inflate(Resource.Layout.node_select, null, true);
-            contentMain.AddView(nodeSelectView);
+            ContentMain.AddView(nodeSelectView);
 
             var menu = navigationView.Menu;
             var userMenu = menu.FindItem(Resource.Id.userMenu);
@@ -92,7 +93,7 @@ namespace RMS.Activities
         private void CreateButtons()
         {
 
-            ScrollView scroll = FindViewById<ScrollView>(Resource.Id.nodeScrollView);
+            ScrollView = FindViewById<ScrollView>(Resource.Id.nodeScrollView);
 
             LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
             LinearLayout layout = new LinearLayout(this)
@@ -102,13 +103,13 @@ namespace RMS.Activities
             };
             layout.SetGravity(GravityFlags.Center);
 
-            scroll.AddView(layout);
+            ScrollView.AddView(layout);
 
             foreach (Node n in Nodes)
             {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
                 lp.SetMargins(DpToPx(10), DpToPx(5), DpToPx(10), DpToPx(5));
-               
+
 
                 var button = new Button(this)
                 {
@@ -118,6 +119,7 @@ namespace RMS.Activities
                 };
                 button.SetMinimumWidth(DpToPx(300));
                 button.SetMaxWidth(DpToPx(500));
+                button.SetMaxHeight(DpToPx(5));
                 //button.SetPadding(0, -10, 0, -10);
 
                 GradientDrawable border = new GradientDrawable();
@@ -186,11 +188,31 @@ namespace RMS.Activities
                 StartActivity(activity);
             }
 
-
-
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            int id = item.ItemId;
+
+            if (id == Resource.Id.topMenu)
+            {
+                ScrollView.ScrollTo(0, 0);
+            }
+            else if (id == Resource.Id.bottomMenu)
+            {
+                ScrollView.FullScroll(FocusSearchDirection.Down);
+            }
+            else if (id == Resource.Id.logoutMenu)
+            {
+                Intent intent = new Intent(this, typeof(MainActivity));
+                intent.SetFlags(ActivityFlags.ClearTop);
+                StartActivity(intent);
+            }
+
+            return base.OnOptionsItemSelected(item);
         }
     }
 }

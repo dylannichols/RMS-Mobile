@@ -29,6 +29,8 @@ namespace RMS.Activities
         public string Name;
         public int Node;
         public int i;
+        public LinearLayout DashLayout;
+        public NestedScrollView DashScroll;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // General set up
@@ -45,7 +47,6 @@ namespace RMS.Activities
             toggle.SyncState();
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
-            navigationView.SetNavigationItemSelectedListener(this);
             navigationView.SetNavigationItemSelectedListener(this);
 
             // Set up dashboard
@@ -65,6 +66,7 @@ namespace RMS.Activities
 
             this.Title = Name;
 
+
             InitializePage(true);
         }
 
@@ -80,15 +82,17 @@ namespace RMS.Activities
                 // Some layout scaffolding must be done if the activity is being loaded for the first time
                 if (firstLoad)
                 {
-                    LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+
+                    ContentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
 
                     var select = CreateNavDropdown(dashboard);
-                    contentMain.AddView(select);
+                    ContentMain.AddView(select);
 
                     LayoutInflater inflater = (LayoutInflater)GetSystemService(LayoutInflaterService);
 
-                    View dashLayout = inflater.Inflate(Resource.Layout.dashboard, null, true);
-                    contentMain.AddView(dashLayout);
+                    View dashboardView = inflater.Inflate(Resource.Layout.dashboard, null, true);
+                    ContentMain.AddView(dashboardView);
+                    DashScroll = FindViewById<NestedScrollView>(Resource.Id.dashScroll);
 
                     SwipeRefreshLayout swipeRefreshLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.swipeLayout);
                     swipeRefreshLayout.Refresh += (s, arg) =>
@@ -97,24 +101,27 @@ namespace RMS.Activities
                         InitializePage(false);
                         swipeRefreshLayout.Refreshing = false;
                     };
+
                 }
 
-
                 i = 0;
-                LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.dashLayout);
-                layout.RemoveAllViews();
+                DashLayout = FindViewById<LinearLayout>(Resource.Id.dashLayout);
+                DashLayout.RemoveAllViews();
 
                 var timer = RefreshTimer();
-                layout.AddView(timer);
+                DashLayout.AddView(timer);
 
                 foreach (Header h in dashboard)
                 {
                     var table = CreateTable(h);
-                    layout.AddView(table);
+                    DashLayout.AddView(table);
                 }
 
-                var toast = Toast.MakeText(this, "Data successfully updated", ToastLength.Short);
-                toast.Show();
+                if (!firstLoad)
+                {
+                    var toast = Toast.MakeText(this, "Data successfully updated", ToastLength.Short);
+                    toast.Show();
+                }
             }
         }
 
@@ -148,16 +155,24 @@ namespace RMS.Activities
             spinner.SetGravity(GravityFlags.CenterHorizontal);
             spinner.BackgroundTintList = GetColorStateList(Resource.Color.primaryTextColor);
 
+            bool firstTrigger = true;
+
             // Event listener so that when a user selects a header they are sent to the relevant table
             spinner.ItemSelected += (s, arg) =>
             {
-                var header = spinner.SelectedItemPosition;
+                if (firstTrigger)
+                {
+                    firstTrigger = false;
+                }
+                else
+                {
+                    var header = spinner.SelectedItemPosition;
 
-                View item = FindViewById(header);
+                    View item = FindViewById(header);
 
-                NestedScrollView sv = FindViewById<NestedScrollView>(Resource.Id.dashScroll);
+                    DashScroll.ScrollTo(0, (item.Top - DpToPx(10)));
+                }
 
-                sv.ScrollTo(0, (item.Top - 20));
             };
 
 
@@ -307,8 +322,10 @@ namespace RMS.Activities
                 row.SetBackgroundColor(Android.Graphics.Color.ParseColor("#E8E8E8"));
             }
 
-            TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, DpToPx(28), 5);
-            param.LeftMargin = DpToPx(10);
+            TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WrapContent, DpToPx(28), 5)
+            {
+                LeftMargin = DpToPx(10)
+            };
 
             // Set up attributes for text
             var textColour = Android.Graphics.Color.ParseColor("#212529");
@@ -329,8 +346,10 @@ namespace RMS.Activities
             row.AddView(label);
 
             // Set up right hand side of dash item for different types of content
-            LinearLayout right = new LinearLayout(this);
-            right.LayoutParameters = param;
+            LinearLayout right = new LinearLayout(this)
+            {
+                LayoutParameters = param
+            };
             right.SetGravity(GravityFlags.Right);
             right.SetPadding(0, 0, DpToPx(10), 0);
 
@@ -413,6 +432,7 @@ namespace RMS.Activities
             int address_id = item.address_id;
             int node_id = item.node_id;
 
+
             // Event listener for when user interacts with switch
             check.Click += (s, arg) =>
             {
@@ -452,10 +472,19 @@ namespace RMS.Activities
             int address_id = item.address_id;
             int node_id = item.node_id;
 
+            bool firstTrigger = true;
+
             // Event listener for when user interacts with spinner
             spinner.ItemSelected += (s, arg) =>
             {
-                UpdateDashItem("combo", item.display_value, node_id, address_id);
+                if (firstTrigger)
+                {
+                    firstTrigger = false;
+                }
+                else
+                {
+                    UpdateDashItem("combo", item.display_value, node_id, address_id);
+                }
             };
             return spinner;
         }
@@ -484,13 +513,23 @@ namespace RMS.Activities
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
                     var result = streamReader.ReadToEnd();
-                    var toast = Toast.MakeText(this, result.ToString(), ToastLength.Short);
+                    var toast = Toast.MakeText(this, "Item successfully updated", ToastLength.Short);
                     toast.Show();
                 }
             }
             catch (System.Net.WebException ex)
             {
-                Console.WriteLine(ex);
+                Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
+                alert.SetTitle("Error");
+                alert.SetMessage("There was a server error with your request. If this persists, contact support.");
+                alert.SetPositiveButton("OK", (s, arg) =>
+                {
+                    alert.Dispose();
+                });
+                Dialog error = alert.Create();
+                error.Show();
+                alert.Dispose();
+                Console.Error.WriteLine(ex);
             }
         }
 
@@ -517,12 +556,22 @@ namespace RMS.Activities
                 {
                     // if dashboard call fails, go back to node select and display an error
 
-                    Intent intent = new Intent(this, typeof(NodeSelect));
-                    intent.SetFlags(ActivityFlags.ReorderToFront);
+                    Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
+                    alert.SetTitle("Error");
+                    alert.SetMessage("This node is currently unavailable. If this persists, contact support.");
+                    alert.SetPositiveButton("OK", (s, arg) =>
+                    {
+                        Intent intent = new Intent(this, typeof(NodeSelect));
+                        intent.SetFlags(ActivityFlags.ReorderToFront);
 
-                    intent.PutExtra("Error", e.Message);
-                    StartActivity(intent);
+                        StartActivity(intent);
 
+                        alert.Dispose();
+                    });
+                    Dialog error = alert.Create();
+                    error.Show();
+                    alert.Dispose();
+                    Console.Error.WriteLine(e);
 
                     return null;
                 }
@@ -551,6 +600,28 @@ namespace RMS.Activities
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            int id = item.ItemId;
+
+            if (id == Resource.Id.topMenu)
+            {
+                DashScroll.ScrollTo(0, 0);
+            }
+            else if (id == Resource.Id.bottomMenu)
+            {
+                DashScroll.FullScroll(DashLayout.Bottom);
+            }
+            else if (id == Resource.Id.logoutMenu)
+            {
+                Intent intent = new Intent(this, typeof(MainActivity));
+                intent.SetFlags(ActivityFlags.ClearTop);
+                StartActivity(intent);
+            }
+
+            return base.OnOptionsItemSelected(item);
         }
     }
 }

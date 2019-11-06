@@ -22,10 +22,11 @@ using Xamarin.Essentials;
 
 namespace RMS
 {
-    [Activity (Name = "com.concar.rms.main", Label = "@string/app_name", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustPan)]
+    [Activity(Name = "com.concar.rms.main", Label = "@string/app_name", MainLauncher = true, WindowSoftInputMode = SoftInput.AdjustPan)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         public static double Density;
+        public LinearLayout ContentMain;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             // General set up
@@ -48,15 +49,15 @@ namespace RMS
             Density = DeviceDisplay.MainDisplayInfo.Density;
 
             // Page layout set up
-            LinearLayout contentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
+            ContentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
 
-         
+
             //contentMain.SetBackgroundColor(Android.Graphics.Color.ParseColor("#3f51b5"));
 
             LayoutInflater inflater = (LayoutInflater)GetSystemService(Context.LayoutInflaterService);
 
             View loginView = inflater.Inflate(Resource.Layout.login, null, true);
-            contentMain.AddView(loginView);
+            ContentMain.AddView(loginView);
 
             Button loginBtn = FindViewById<Button>(Resource.Id.loginBtn);
 
@@ -91,7 +92,7 @@ namespace RMS
                     activity.PutExtra("Token", token);
 
                     StartActivity(activity);
-                } 
+                }
                 // Otherwise display an error message
                 else
                 {
@@ -101,9 +102,9 @@ namespace RMS
                     {
                         message = "Incorrect login information.";
                     }
-                    error.Text = message;                    
-                 }             
-            };        
+                    error.Text = message;
+                }
+            };
         }
 
         public override void OnBackPressed()
@@ -127,12 +128,6 @@ namespace RMS
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
-            {
-                return true;
-            }
-
             return base.OnOptionsItemSelected(item);
         }
 
@@ -145,8 +140,6 @@ namespace RMS
 
         public virtual bool OnNavigationItemSelected(IMenuItem item)
         {
-            
-
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;

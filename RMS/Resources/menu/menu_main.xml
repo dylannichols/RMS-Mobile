@@ -2,8 +2,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/topMenu"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Top"
+        app:showAsAction="never" />
+  <item
+        android:id="@+id/bottomMenu"
+        android:orderInCategory="100"
+        android:title="Bottom"
+        app:showAsAction="never" />
+  <item
+        android:id="@+id/logoutMenu"
+        android:orderInCategory="100"
+        android:title="Logout"
         app:showAsAction="never" />
 </menu>
