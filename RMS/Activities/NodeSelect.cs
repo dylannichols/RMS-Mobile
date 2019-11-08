@@ -178,6 +178,12 @@ namespace RMS.Activities
                 intent.SetFlags(ActivityFlags.ClearTask);
                 StartActivity(intent);
             }
+            else if (item.ItemId == Resource.Id.aboutNav)
+            {
+                Intent activity = new Intent(this, typeof(About));
+                activity.PutExtra("Auth", true);
+                StartActivity(activity);
+            }
             else
             {
                 var node = Nodes.Find(x => x.node_name == item.TitleFormatted.ToString());

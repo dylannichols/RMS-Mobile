@@ -140,6 +140,13 @@ namespace RMS
 
         public virtual bool OnNavigationItemSelected(IMenuItem item)
         {
+            if (item.ItemId == Resource.Id.aboutNav)
+            {
+                Intent activity = new Intent(this, typeof(About));
+                activity.PutExtra("Auth", false);
+                StartActivity(activity);
+            }
+
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;

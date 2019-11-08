@@ -1,142 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="About Us"
-        android:id="@+id/about"
-        android:textStyle="bold"
-        android:textSize="40sp"
-        android:layout_centerHorizontal="true"
-    />
-    <LinearLayout
-        android:id="@+id/authorlayout"
+    android:layout_height="match_parent"
+    android:id="@+id/aboutScroll">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/about"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="40dp">
+        android:layout_height="match_parent">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Author:"
-            android:id="@+id/author"
+            android:text="About Us"
+            android:id="@+id/about"
             android:textStyle="bold"
-            android:textSize="22sp"
-            android:layout_marginRight="10dp"
+            android:textSize="40sp"
+            android:layout_centerHorizontal="true"
     />
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/authorlayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dylan Nichols"
-            android:textSize="22sp"
-            android:layout_toRightOf="@+id/author"
+            android:layout_below="@+id/about"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="40dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Author:"
+                android:id="@+id/author"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:layout_marginRight="10dp"
+    />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dylan Nichols"
+                android:textSize="22sp"
+                android:layout_toRightOf="@+id/author"
 
     />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/companylayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/authorlayout"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp">
-        <TextView
-            android:layout_width="wrap_content"
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/companylayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Company:"
-            android:id="@+id/company"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:layout_marginRight="10dp"
+            android:layout_below="@+id/authorlayout"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Company:"
+                android:id="@+id/company"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:layout_marginRight="10dp"
     />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Conway and Carpenter"
-            android:textSize="22sp"
-            android:layout_toRightOf="@+id/author"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Conway and Carpenter"
+                android:textSize="22sp"
+                android:layout_toRightOf="@+id/author"
 
     />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/companylayout"
-        android:id="@+id/publishedlayout"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp">
-        <TextView
-            android:layout_width="wrap_content"
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Published:"
-            android:id="@+id/published"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:layout_marginRight="10dp"
+            android:layout_below="@+id/companylayout"
+            android:id="@+id/publishedlayout"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Published:"
+                android:id="@+id/published"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:layout_marginRight="10dp"
     />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="08/11/2019"
-            android:textSize="22sp"
-            android:layout_toRightOf="@+id/published"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="08/11/2019"
+                android:textSize="22sp"
+                android:layout_toRightOf="@+id/published"
 
     />
-    </LinearLayout>
-     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/publishedlayout"
-        android:id="@+id/descriptionlayout"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description:"
-            android:id="@+id/description"
-            android:textStyle="bold"
-            android:textSize="22sp"
-            android:layout_marginRight="10dp"
+            android:layout_below="@+id/publishedlayout"
+            android:id="@+id/descriptionlayout"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description:"
+                android:id="@+id/description"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:layout_marginRight="10dp"
     />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="RMS is a remote monitoring application for automation in the horticulture industry. Enabling you to control your product from anywhere in the world."
-            android:textSize="22sp"
-            android:layout_below="@+id/description"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RMS is a remote monitoring application for automation in the horticulture industry. Enabling you to control your product from anywhere in the world."
+                android:textSize="22sp"
+                android:layout_below="@+id/description"
 
     />
-    </LinearLayout>
-    <Button
-        android:id="@+id/applink"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionlayout"
-        android:layout_marginRight="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/button_background"
-        android:text="Go to the RMS web app"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
+        </LinearLayout>
+        <Button
+            android:id="@+id/appLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/descriptionlayout"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_background"
+            android:text="Go to the RMS web app"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
             />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/applink"
-        android:layout_marginRight="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/button_background"
-        android:text="Visit the ConCar website"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/appLink"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_background"
+            android:text="Visit the ConCar website"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:id="@+id/webLink"
+            android:layout_marginBottom="10dp"
             />
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

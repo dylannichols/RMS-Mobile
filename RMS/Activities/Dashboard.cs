@@ -237,7 +237,7 @@ namespace RMS.Activities
                 LayoutParameters = layoutparams,
                 Id = i
             };
-            
+
             if (DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Landscape)
             {
                 table.LayoutParameters.Width = DpToPx(450);
@@ -602,6 +602,12 @@ namespace RMS.Activities
                 activity.PutExtra("Token", Token);
                 StartActivity(activity);
             }
+            else if (item.ItemId == Resource.Id.aboutNav)
+            {
+                Intent activity = new Intent(this, typeof(About));
+                activity.PutExtra("Auth", true);
+                StartActivity(activity);
+            }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
@@ -618,7 +624,7 @@ namespace RMS.Activities
             }
             else if (id == Resource.Id.bottomMenu)
             {
-                DashScroll.ScrollTo(0,DashLayout.Bottom);
+                DashScroll.ScrollTo(0, DashLayout.Bottom);
             }
             else if (id == Resource.Id.logoutMenu)
             {

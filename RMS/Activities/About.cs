@@ -14,10 +14,11 @@ using Android.Support.V7.App;
 
 using Android.Views;
 using Android.Widget;
+using Xamarin.Essentials;
 
 namespace RMS.Activities
 {
-    [Activity(Label = "About Us")]
+    [Activity(Label = "About the App")]
     public class About : MainActivity
     {
         public bool Auth;
@@ -40,15 +41,6 @@ namespace RMS.Activities
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            Auth = Intent.Extras.GetBoolean("Auth");
-
-            if (Auth)
-            {
-                var menu = navigationView.Menu;
-
-                var userMenu = menu.FindItem(Resource.Id.userMenu);
-                userMenu.SetVisible(true);
-            }
 
             ContentMain = FindViewById<LinearLayout>(Resource.Id.contentMain);
 
@@ -58,6 +50,30 @@ namespace RMS.Activities
             View about = inflater.Inflate(Resource.Layout.about, null, true);
             ContentMain.AddView(about);
             AboutScroll = FindViewById<ScrollView>(Resource.Id.aboutScroll);
+
+            Auth = Intent.Extras.GetBoolean("Auth");
+
+            if (Auth == true)
+            {
+                var menu = navigationView.Menu;
+
+                var userMenu = menu.FindItem(Resource.Id.userMenu);
+                userMenu.SetVisible(true);
+            }
+
+            Button appLink = FindViewById<Button>(Resource.Id.appLink);
+            appLink.Click += async (s, arg) =>
+            {
+                var uri = "http://13.210.251.7";
+                await Browser.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
+            };
+
+            Button webLink = FindViewById<Button>(Resource.Id.webLink);
+            webLink.Click += async (s, arg) =>
+            {
+                var uri = "https://www.concar.co.nz/";
+                await Browser.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
+            };
         }
 
         public override bool OnNavigationItemSelected(IMenuItem item)
@@ -67,13 +83,37 @@ namespace RMS.Activities
                 Intent intent = new Intent(this, typeof(MainActivity));
                 intent.SetFlags(ActivityFlags.ClearTop);
                 StartActivity(intent);
-            } else { 
-
+            }
+            else
+            {
+                AboutScroll.ScrollTo(0, 0);
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            int id = item.ItemId;
+
+            if (id == Resource.Id.topMenu)
+            {
+                AboutScroll.ScrollTo(0, 0);
+            }
+            else if (id == Resource.Id.bottomMenu)
+            {
+                AboutScroll.ScrollTo(0, AboutScroll.Bottom);
+            }
+            else if (id == Resource.Id.logoutMenu)
+            {
+                Intent intent = new Intent(this, typeof(MainActivity));
+                intent.SetFlags(ActivityFlags.ClearTop);
+                StartActivity(intent);
+            }
+
+            return base.OnOptionsItemSelected(item);
         }
     }
 }
